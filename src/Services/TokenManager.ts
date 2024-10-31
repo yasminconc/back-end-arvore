@@ -5,9 +5,6 @@ dotenv.config()
 
 export class TokenManager {
 
-    constructor(
-        private expiresIn = "3h"
-    ){}
 
     generateToken = (id: AuthenticationData): string => {
         return jwt.sign(
@@ -15,7 +12,7 @@ export class TokenManager {
             process.env.PRIVATE_KEY as jwt.Secret,
 
             {
-                expiresIn: this.expiresIn
+                expiresIn: process.env.TOKEN_EXPIRES
             }
 
         )
