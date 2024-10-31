@@ -31,16 +31,3 @@ export class UserData {
     }
 }
 
-
-// getUserByEmail = async (email: string) => {
-//     try {
-//         const reponse = await this.connection(this.tableName)
-//         .where({email: email})
-
-//         return reponse[0]
-        
-//     } catch (error:any) {
-//         throw new CustomError(404,error.message);
-//     }
-
-// }
