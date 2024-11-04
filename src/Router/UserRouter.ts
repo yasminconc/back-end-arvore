@@ -21,3 +21,10 @@ const userController: UserController = new UserController(userBusiness)
 userRouter.post('/signup', userController.signup)
 
 userRouter.post('/login', userController.login)
+
+userRouter.get('/user/profile', userController.getProfile)
+
+userRouter.put("/user/update/password", userController.updatePassword)
+userRouter.put("/user/update", userController.editProfile)
+
+userRouter.delete("/user/delete", userController.deleteUser)

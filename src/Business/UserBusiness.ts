@@ -4,6 +4,8 @@ import { CustomError } from "../Models/CustomError";
 import { HashManager } from "../Services/HashManager";
 import { IdGenerator } from "../Services/IdGenerator";
 import { TokenManager } from "../Services/TokenManager";
+import { AuthenticationData } from "../Models/AuthenticationData";
+import { EditProfileBody, TreatedProfile } from "../Models/Requests";
 
 export class UserBusiness {
     constructor(
@@ -92,4 +94,92 @@ export class UserBusiness {
             throw new CustomError(error.statusCode, error.message)
         }
     }
+
+    editProfile = async (token: string, body: EditProfileBody): Promise<void> => {
+		try {
+            if(!token) throw new CustomError(407, 'Faça o log in primeiro')
+            
+            if(!body) throw new CustomError(400, 'Insira pelo menos uma informação')
+
+            const auth: AuthenticationData = this.tokenManager.getTokenData(token)
+
+            const user: User | null = await this.userData.getUserById(auth.id)
+            if(!user) throw new CustomError(409, "Usuário não encontrado")
+
+			await this.userData.editProfile(user.id, body);
+		} catch (error: any) {
+			if (error instanceof CustomError) {
+				throw new CustomError(error.statusCode, error.message);
+			} else {
+				throw new Error(error.message);
+			}
+		}
+	};
+
+    getProfile = async (token: string): Promise<TreatedProfile | null>  => {
+        try {
+            if(!token) throw new CustomError(401, "Faça o log in primeiro")
+
+            const auth: AuthenticationData = this.tokenManager.getTokenData(token)
+
+            const user: User | null = await this.userData.getUserById(auth.id)
+            if(!user) throw new CustomError(409, "Usuário não encontrado")
+
+            return await this.userData.getProfile(user.id)
+        } catch (error: any) {
+            if (error instanceof CustomError) {
+               throw new CustomError(error.statusCode, error.message);
+            } else {
+                throw new Error(error.message)
+            }
+        }
+    };
+
+    updatePassword = async (token: string, currentPassword: string, newPassword: string): Promise<void> => {
+        try {
+            if(!token) throw new CustomError(401, "Faça o log in primeiro")
+            if(!currentPassword) throw new CustomError(400, 'Insira sua senha atual')
+            if(!newPassword) throw new CustomError(400, 'Insira sua nova senha')
+            if(newPassword.length < 6){
+                    throw new CustomError(400, 'A senha deve ter no mínimo 6 caracteres')
+                }
+
+            const auth: AuthenticationData = this.tokenManager.getTokenData(token)
+    
+            const user: User | null = await this.userData.getUserById(auth.id)
+            if(!user) throw new CustomError(409, "Usuário não encontrado")
+
+            const verifyPassword: Promise<Boolean> = this.hashManager.compare(currentPassword, user.password)
+            if(!verifyPassword) throw new CustomError(409, "Senha incorreta")
+
+            const hashPassword: string = await this.hashManager.hash(newPassword)
+
+            await this.userData.updatePassword(user.id, hashPassword)
+        } catch (error: any) {
+            if (error instanceof CustomError) {
+               throw new CustomError(error.statusCode, error.message);
+            } else {
+                throw new Error(error.message)
+            }
+        }
+    };
+
+    deleteUser = async (token: string): Promise<void> => {
+        try {
+            if(!token) throw new CustomError(401, 'Faça o log in primeiro')
+
+            const auth: AuthenticationData = this.tokenManager.getTokenData(token)
+
+            const user: User | null = await this.userData.getUserById(auth.id)
+            if(!user) throw new CustomError(409, "Usuário não encontrado")
+            
+            await this.userData.deleteUser(user.id)
+        } catch (error: any) {
+            if (error instanceof CustomError) {
+               throw new CustomError(error.statusCode, error.message);
+            } else {
+                throw new Error(error.message)
+            }
+        }
+    };
 }
