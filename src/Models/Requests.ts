@@ -1,4 +1,3 @@
-
 export type CreateUserBody = {
     id: string,
     name: string,

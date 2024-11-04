@@ -1,5 +1,5 @@
-import * as bcrypt from 'bcryptjs'
 import dotenv from 'dotenv'
+import * as bcrypt from 'bcryptjs'
 
 dotenv.config()
 
@@ -11,7 +11,7 @@ export class HashManager {
         return bcrypt.hash(password, salt)
     }
 
-    compare = async (password: string, hashPassword: string): Promise <Boolean> => {
+    compare = async (password: string, hashPassword: string): Promise<Boolean> => {
         return await bcrypt.compare(password, hashPassword)
     }
 }

@@ -20,4 +20,3 @@ const server = app.listen(port, () => {
 })
 
 app.use(userRouter)
-
