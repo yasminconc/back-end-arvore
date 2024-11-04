@@ -44,4 +44,11 @@ de erros para o email e senha. A verificação é feita através do email cadast
 foi desenvolvido para que seja verificado se o email existe. E ao concluir o login 
 é retornado uma mensagem de sucesso seguido do token do usuário.
 
+
+#
+
+* Pegar perfil do usuário
+* Editar usuário
+* Atualizar senha
+* Deletar usuário
   
